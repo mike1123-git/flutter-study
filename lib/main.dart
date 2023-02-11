@@ -22,71 +22,91 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyFirstScreen extends StatelessWidget {
+class MyFirstScreen extends StatefulWidget {
   MyFirstScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('Home'),
-        ),
-        body: Center(
-            child: Container(
-                child: const Text('Home Screen',
-                    style: TextStyle(fontSize: 32.0)))),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: 1,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-                label: 'Home', icon: Icon(Icons.home, size: 32)),
-            BottomNavigationBarItem(
-                label: 'next', icon: Icon(Icons.navigate_next, size: 32))
-          ],
-          onTap: (int value) {
-            if (value == 1) {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => new SecondScreen()));
-            }
-          },
-        ));
+  // State<StatefulWidget> createState() {
+  //   return _MyFirstScreenState;
+  // }
+  MyFirstScreenState createState() {
+    return MyFirstScreenState();
   }
 }
 
-class SecondScreen extends StatelessWidget {
+class MyFirstScreenState extends State<MyFirstScreen> {
+  final _controller = TextEditingController();
+  var _input = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Next'),
+        title: const Text('home'),
       ),
-      body: const Center(
-          child: Text('Next Screen',
-            style: TextStyle(fontSize: 32.0),
-          )
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.navigate_before),
-              label: 'prev'
+      body: Column(children: [
+        const Text('Home Screen', style: TextStyle(fontSize: 32.0)),
+        Padding(
+          padding: EdgeInsets.all(10.0),
+          child: TextField(
+            controller: _controller,
+            style: const TextStyle(fontSize: 20.0),
+            onChanged: changeField,
           ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.android),
-              label: '?'
-          )
+        )
+      ]),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 1,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
+          BottomNavigationBarItem(icon: Icon(Icons.navigate_next),label: 'newt')
         ],
-        onTap: (int value){
-          if(value == 0){
-            Navigator.pop(context);
+        onTap: (int value) {
+          if (value == 0) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => SecondScreen(_input)));
           }
         },
       ),
     );
   }
 
+  void changeField(String value) {
+    _input = value;
+  }
+}
 
+class SecondScreen extends StatelessWidget {
+  final String _value;
+
+  SecondScreen(this._value);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Next'),
+      ),
+      body:  Center(
+          child: Text(
+        'you typed $_value',
+        style: const TextStyle(fontSize: 32.0),
+      )),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 0,
+        items: const [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.navigate_before), label: 'prev'),
+          BottomNavigationBarItem(icon: Icon(Icons.android), label: '?')
+        ],
+        onTap: (int value) {
+          if (value == 0) {
+            Navigator.pop(context);
+          }
+        },
+      ),
+    );
+  }
 }
 
 class MyHomePage extends StatefulWidget {
@@ -138,39 +158,35 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                  Container(
-                      color: Colors.blue,
-                      height: 120.0,
-                      child: const Center(
-                          child: Text(
-                              'One', style: TextStyle(fontSize: 23.0)))),
-                  Container(
-                      color: Colors.white,
-                      height: 120.0,
-                      child: const Center(
-                          child: Text(
-                            'Two',
-                            style: TextStyle(fontSize: 23.0),
-                          ))),
-                  Container(
-                      color: Colors.blue,
-                      height: 120.0,
-                      child: const Center(
-                          child: Text(
-                              'three', style: TextStyle(fontSize: 23.0)))),
-                  Container(
-                      color: Colors.white,
-                      height: 120.0,
-                      child: const Center(
-                          child: Text(
-                              'four', style: TextStyle(fontSize: 23.0)))),
-                  Container(
-                      color: Colors.blue,
-                      height: 120.0,
-                      child: const Center(
-                          child: Text(
-                              'five', style: TextStyle(fontSize: 23.0))))
-                ])));
+              Container(
+                  color: Colors.blue,
+                  height: 120.0,
+                  child: const Center(
+                      child: Text('One', style: TextStyle(fontSize: 23.0)))),
+              Container(
+                  color: Colors.white,
+                  height: 120.0,
+                  child: const Center(
+                      child: Text(
+                    'Two',
+                    style: TextStyle(fontSize: 23.0),
+                  ))),
+              Container(
+                  color: Colors.blue,
+                  height: 120.0,
+                  child: const Center(
+                      child: Text('three', style: TextStyle(fontSize: 23.0)))),
+              Container(
+                  color: Colors.white,
+                  height: 120.0,
+                  child: const Center(
+                      child: Text('four', style: TextStyle(fontSize: 23.0)))),
+              Container(
+                  color: Colors.blue,
+                  height: 120.0,
+                  child: const Center(
+                      child: Text('five', style: TextStyle(fontSize: 23.0))))
+            ])));
     bottomNavigationBar:
     BottomNavigationBar(
       currentIndex: _index,
@@ -190,8 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void b_onPressed() =>
-      setState(() {
+  void b_onPressed() => setState(() {
         _message = 'you said ${_controller.text}';
       });
 
@@ -218,8 +233,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void buttonPressed() {
     showDialog(
         context: context,
-        builder: (BuildContext context) =>
-            AlertDialog(
+        builder: (BuildContext context) => AlertDialog(
               title: const Text("hello!!!"),
               content: const Text("This is Sample"),
               actions: <Widget>[
@@ -236,8 +250,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void buttonPressed_sd() {
     showDialog(
         context: context,
-        builder: (BuildContext buildContext) =>
-            SimpleDialog(
+        builder: (BuildContext buildContext) => SimpleDialog(
               title: const Text('Select Assignment'),
               children: <Widget>[
                 SimpleDialogOption(
@@ -275,8 +288,8 @@ class _MyHomePageState extends State<MyHomePage> {
     _star = _star < 0
         ? 0
         : _star > 5
-        ? 5
-        : _star;
+            ? 5
+            : _star;
     setState(() {
       _stars = '☆☆☆☆☆★★★★★'.substring(5 - _star, 5 - _star + 5);
       _message = '$_message[$_star]';
