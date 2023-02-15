@@ -17,7 +17,13 @@ class MyApp extends StatelessWidget {
         accentColor: const Color(0xFF2196f3),
         canvasColor: const Color(0xFFfafafa),
       ),
-      home: MyFirstScreen(),
+      // initialRoute: '/',
+      // routes: {
+      //   '/': (context) => MyFirstScreen(),
+      //   '/second': (context) => SecondScreen('second screen'),
+      //   '/third': (context) => SecondScreen('third screen'),
+      // },
+      home: MyHomePageViewTab(),
     );
   }
 }
@@ -59,12 +65,12 @@ class MyFirstScreenState extends State<MyFirstScreen> {
         currentIndex: 1,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
-          BottomNavigationBarItem(icon: Icon(Icons.navigate_next),label: 'newt')
+          BottomNavigationBarItem(
+              icon: Icon(Icons.navigate_next), label: 'newt')
         ],
         onTap: (int value) {
-          if (value == 0) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => SecondScreen(_input)));
+          if (value == 1) {
+            Navigator.pushNamed(context, '/second');
           }
         },
       ),
@@ -87,11 +93,11 @@ class SecondScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Next'),
       ),
-      body:  Center(
+      body: Center(
           child: Text(
-        'you typed $_value',
-        style: const TextStyle(fontSize: 32.0),
-      )),
+            'you typed $_value',
+            style: const TextStyle(fontSize: 32.0),
+          )),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
         items: const [
@@ -102,6 +108,9 @@ class SecondScreen extends StatelessWidget {
         onTap: (int value) {
           if (value == 0) {
             Navigator.pop(context);
+          }
+          if (value == 1) {
+            Navigator.pushNamed(context, '/third');
           }
         },
       ),
@@ -158,35 +167,39 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-              Container(
-                  color: Colors.blue,
-                  height: 120.0,
-                  child: const Center(
-                      child: Text('One', style: TextStyle(fontSize: 23.0)))),
-              Container(
-                  color: Colors.white,
-                  height: 120.0,
-                  child: const Center(
-                      child: Text(
-                    'Two',
-                    style: TextStyle(fontSize: 23.0),
-                  ))),
-              Container(
-                  color: Colors.blue,
-                  height: 120.0,
-                  child: const Center(
-                      child: Text('three', style: TextStyle(fontSize: 23.0)))),
-              Container(
-                  color: Colors.white,
-                  height: 120.0,
-                  child: const Center(
-                      child: Text('four', style: TextStyle(fontSize: 23.0)))),
-              Container(
-                  color: Colors.blue,
-                  height: 120.0,
-                  child: const Center(
-                      child: Text('five', style: TextStyle(fontSize: 23.0))))
-            ])));
+                  Container(
+                      color: Colors.blue,
+                      height: 120.0,
+                      child: const Center(
+                          child: Text(
+                              'One', style: TextStyle(fontSize: 23.0)))),
+                  Container(
+                      color: Colors.white,
+                      height: 120.0,
+                      child: const Center(
+                          child: Text(
+                            'Two',
+                            style: TextStyle(fontSize: 23.0),
+                          ))),
+                  Container(
+                      color: Colors.blue,
+                      height: 120.0,
+                      child: const Center(
+                          child: Text(
+                              'three', style: TextStyle(fontSize: 23.0)))),
+                  Container(
+                      color: Colors.white,
+                      height: 120.0,
+                      child: const Center(
+                          child: Text(
+                              'four', style: TextStyle(fontSize: 23.0)))),
+                  Container(
+                      color: Colors.blue,
+                      height: 120.0,
+                      child: const Center(
+                          child: Text(
+                              'five', style: TextStyle(fontSize: 23.0))))
+                ])));
     bottomNavigationBar:
     BottomNavigationBar(
       currentIndex: _index,
@@ -206,7 +219,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void b_onPressed() => setState(() {
+  void b_onPressed() =>
+      setState(() {
         _message = 'you said ${_controller.text}';
       });
 
@@ -233,7 +247,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void buttonPressed() {
     showDialog(
         context: context,
-        builder: (BuildContext context) => AlertDialog(
+        builder: (BuildContext context) =>
+            AlertDialog(
               title: const Text("hello!!!"),
               content: const Text("This is Sample"),
               actions: <Widget>[
@@ -250,7 +265,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void buttonPressed_sd() {
     showDialog(
         context: context,
-        builder: (BuildContext buildContext) => SimpleDialog(
+        builder: (BuildContext buildContext) =>
+            SimpleDialog(
               title: const Text('Select Assignment'),
               children: <Widget>[
                 SimpleDialogOption(
@@ -288,8 +304,8 @@ class _MyHomePageState extends State<MyHomePage> {
     _star = _star < 0
         ? 0
         : _star > 5
-            ? 5
-            : _star;
+        ? 5
+        : _star;
     setState(() {
       _stars = '☆☆☆☆☆★★★★★'.substring(5 - _star, 5 - _star + 5);
       _message = '$_message[$_star]';
@@ -308,5 +324,62 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _message = 'you tapeed : No. $_index';
     });
+  }
+}
+
+class MyHomePageViewTab extends StatefulWidget {
+
+  @override
+  MyHomePageViewTabState createState() => MyHomePageViewTabState();
+}
+
+class MyHomePageViewTabState extends State<MyHomePageViewTab>
+    with SingleTickerProviderStateMixin {
+  static const List<Tab> tabs = <Tab>[
+    Tab(text:'One'),
+    Tab(text:'Two'),
+    Tab(text:'Three')
+  ];
+  late TabController _tabController;
+  @override
+  void initState(){
+    super.initState();
+    _tabController = TabController(
+        length: tabs.length,
+        vsync:this
+    );
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('My App'),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs:tabs
+        ),
+      ),
+
+      body: TabBarView(
+        controller: _tabController,
+        children:tabs.map((Tab tab){
+          return createTab(tab);
+      }).toList(),
+      ),
+    );
+
+  }
+
+  Widget createTab(Tab tab) {
+    return Center(
+      child: Text(
+        'This is ${tab.text} Tab. ',
+        style: const TextStyle(
+          fontSize: 30.0,
+          color: Colors.blue
+
+        ),
+      ),
+    );
   }
 }
