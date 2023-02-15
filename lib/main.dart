@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       //   '/second': (context) => SecondScreen('second screen'),
       //   '/third': (context) => SecondScreen('third screen'),
       // },
-      home: MyHomePageViewTab(),
+      home: const MyHomePageDrawer(),
     );
   }
 }
@@ -336,38 +336,39 @@ class MyHomePageViewTab extends StatefulWidget {
 class MyHomePageViewTabState extends State<MyHomePageViewTab>
     with SingleTickerProviderStateMixin {
   static const List<Tab> tabs = <Tab>[
-    Tab(text:'One'),
-    Tab(text:'Two'),
-    Tab(text:'Three')
+    Tab(text: 'One'),
+    Tab(text: 'Two'),
+    Tab(text: 'Three')
   ];
   late TabController _tabController;
+
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _tabController = TabController(
         length: tabs.length,
-        vsync:this
+        vsync: this
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('My App'),
         bottom: TabBar(
-          controller: _tabController,
-          tabs:tabs
+            controller: _tabController,
+            tabs: tabs
         ),
       ),
 
       body: TabBarView(
         controller: _tabController,
-        children:tabs.map((Tab tab){
+        children: tabs.map((Tab tab) {
           return createTab(tab);
-      }).toList(),
+        }).toList(),
       ),
     );
-
   }
 
   Widget createTab(Tab tab) {
@@ -375,11 +376,77 @@ class MyHomePageViewTabState extends State<MyHomePageViewTab>
       child: Text(
         'This is ${tab.text} Tab. ',
         style: const TextStyle(
-          fontSize: 30.0,
-          color: Colors.blue
+            fontSize: 30.0,
+            color: Colors.blue
 
         ),
       ),
     );
   }
 }
+
+class MyHomePageDrawer extends StatefulWidget {
+  const MyHomePageDrawer({super.key});
+
+  @override
+  State<StatefulWidget> createState() {
+    return MyHomePageDrawerState();
+  }
+
+}
+
+class MyHomePageDrawerState extends State<MyHomePageDrawer> {
+
+  final _items = <Widget>[];
+  var _message = 'ok';
+  var _tapped = 0;
+
+  @override
+  initState() {
+    super.initState();
+    for (var i = 0; i < 5; i++) {
+      var item = ListTile(
+        leading: const Icon(Icons.android),
+        title: Text('Np.$i'),
+        onTap: () {
+          _tapped = i;
+          tapItem();
+        },
+      );
+      _items.add(item);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Flutter app'),
+      ),
+      body: Center(
+          child: Text(
+              _message,
+              style: const TextStyle(fontSize: 20.0)
+          )
+      ),
+      drawer: Drawer(
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(20.0),
+          children: _items,
+        ),
+      ),
+    );
+  }
+
+  void tapItem() {
+    Navigator.pop(context);
+    setState(() {
+      _message = 'tapped $_tapped';
+    });
+  }
+}
+
+
+
+
