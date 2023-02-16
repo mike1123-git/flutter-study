@@ -61,16 +61,16 @@ class MyPainter extends CustomPainter{
   @override
   void paint(Canvas canvas, Size size) {
     Paint p = Paint();
-    p.style = PaintingStyle.fill;
-    p.color = const Color.fromARGB(150, 0, 250, 255);
-    Rect rect = const Rect.fromLTWH(50.0, 50.0, 150.0, 150.0);
-    canvas.drawRect(rect, p);
     p.style = PaintingStyle.stroke;
-    p.color = const Color.fromARGB(150, 200, 0, 255);
-    p.strokeWidth = 10.0;
-    rect = const Rect.fromLTWH(100.0, 100.0, 150.0, 150.0);
-    canvas.drawRect(rect, p);
-  }
+    p.strokeWidth=5.0;
+    for(var i = 0;i < 10;i++){
+      Rect rect = Rect.fromLTRB(50.0 + 20.0 * i,
+          50.0,
+          50.0,
+          250.0 - 20.0 * i );
+      canvas.drawLine(rect.topLeft,rect.bottomRight,p);
+    }
+ }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
