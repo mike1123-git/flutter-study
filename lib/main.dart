@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
 
 void main() {
   runApp(const MyApp());
@@ -61,15 +62,21 @@ class MyPainter extends CustomPainter{
   @override
   void paint(Canvas canvas, Size size) {
     Paint p = Paint();
-    p.style = PaintingStyle.stroke;
-    p.strokeWidth=5.0;
-    for(var i = 0;i < 10;i++){
-      Rect rect = Rect.fromLTRB(50.0 + 20.0 * i,
-          50.0,
-          50.0,
-          250.0 - 20.0 * i );
-      canvas.drawLine(rect.topLeft,rect.bottomRight,p);
-    }
+    ui.ParagraphBuilder builder = ui.ParagraphBuilder(
+      ui.ParagraphStyle(textDirection: TextDirection.ltr)
+    )..pushStyle(ui.TextStyle(color: Colors.red))
+    ..addText('hello')
+    ..pushStyle(ui.TextStyle(color: Colors.blue[700],fontSize:30.0))
+    ..addText('This is a sample of paragraph text')
+    ..pushStyle(ui.TextStyle(color: Colors.blue[200],fontSize: 30.0))
+    ..addText('you can draw Multi-Font text!!')
+    ;
+
+    ui.Paragraph paragraph = builder.build()
+    ..layout(const ui.ParagraphConstraints(width: 300.0));
+
+    Offset offset =const Offset(50.0, 50.0);
+    canvas.drawParagraph(paragraph, offset);
  }
 
   @override
