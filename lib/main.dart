@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
@@ -61,22 +63,32 @@ class MyHomePageState extends State<MyHomePage> {
 class MyPainter extends CustomPainter{
   @override
   void paint(Canvas canvas, Size size) {
-    Paint p = Paint();
-    ui.ParagraphBuilder builder = ui.ParagraphBuilder(
-      ui.ParagraphStyle(textDirection: TextDirection.ltr)
-    )..pushStyle(ui.TextStyle(color: Colors.red))
-    ..addText('hello')
-    ..pushStyle(ui.TextStyle(color: Colors.blue[700],fontSize:30.0))
-    ..addText('This is a sample of paragraph text')
-    ..pushStyle(ui.TextStyle(color: Colors.blue[200],fontSize: 30.0))
-    ..addText('you can draw Multi-Font text!!')
-    ;
+    Path path = Path();
+    Rect r = const Rect.fromLTWH(50.0, 50.0, 75.0, 75.0);
+    path.addOval(r);
+    r = const Rect.fromLTWH(75.0, 75.0, 125.0, 125.0);
+    path.addOval(r);
+    r = const Rect.fromLTWH(125.0, 125.0, 175.0, 175.0);
+    path.addOval(r);
+    canvas.save();
 
-    ui.Paragraph paragraph = builder.build()
-    ..layout(const ui.ParagraphConstraints(width: 300.0));
+    Paint paint = Paint();
+    paint.color= const Color.fromARGB(150, 255, 0, 0);
+    paint.style=PaintingStyle.fill;
+    canvas.drawPath(path, paint);
 
-    Offset offset =const Offset(50.0, 50.0);
-    canvas.drawParagraph(paragraph, offset);
+    canvas.translate(0.0, 100.0);
+    paint.color=const Color.fromARGB(150, 0, 0, 255);
+    canvas.drawPath(path, paint);
+
+    paint.color=const Color.fromARGB(150, 0, 255, 0);
+    canvas.rotate(-0.5 * pi);
+    canvas.translate(-500.0, 50.0);
+    canvas.scale(1 * 1.5);
+    canvas.drawPath(path, paint);
+
+    canvas.restore();
+
  }
 
   @override
