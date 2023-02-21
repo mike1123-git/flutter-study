@@ -31,68 +31,59 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget{
+class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
   @override
-    MyHomePageState  createState() => MyHomePageState();
-
+  MyHomePageState createState() => MyHomePageState();
 }
 
 class MyHomePageState extends State<MyHomePage> {
+  List<Offset> _points = [];
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        title: const Text(
-          'paint app ',
-          style: TextStyle(fontSize: 23.0)
-        ),
+        title: const Text('event app ', style: TextStyle(fontSize: 23.0)),
       ),
-      body: Container(
-        child: CustomPaint(
-          painter: MyPainter()
+      body: Center(
+        child: Listener(
+          onPointerDown: _addPoint,
+          child: CustomPaint(painter: MyPainter(_points), child: Center()),
         ),
       ),
     );
   }
+
+  void _addPoint(PointerDownEvent event) {
+    setState(() {
+      _points.add(event.localPosition);
+    });
+  }
 }
 
-class MyPainter extends CustomPainter{
+class MyPainter extends CustomPainter {
+  final List<Offset> _points;
+  MyPainter(this._points);
+
   @override
   void paint(Canvas canvas, Size size) {
-    Path path = Path();
-    Rect r = const Rect.fromLTWH(50.0, 50.0, 75.0, 75.0);
-    path.addOval(r);
-    r = const Rect.fromLTWH(75.0, 75.0, 125.0, 125.0);
-    path.addOval(r);
-    r = const Rect.fromLTWH(125.0, 125.0, 175.0, 175.0);
-    path.addOval(r);
-    canvas.save();
-
-    Paint paint = Paint();
-    paint.color= const Color.fromARGB(150, 255, 0, 0);
-    paint.style=PaintingStyle.fill;
-    canvas.drawPath(path, paint);
-
-    canvas.translate(0.0, 100.0);
-    paint.color=const Color.fromARGB(150, 0, 0, 255);
-    canvas.drawPath(path, paint);
-
-    paint.color=const Color.fromARGB(150, 0, 255, 0);
-    canvas.rotate(-0.5 * pi);
-    canvas.translate(-500.0, 50.0);
-    canvas.scale(1 * 1.5);
-    canvas.drawPath(path, paint);
-
-    canvas.restore();
-
- }
+    Paint p = Paint();
+    p.style = PaintingStyle.fill;
+    p.color = const Color.fromARGB(100, 0, 200, 100);
+    for(var pos in _points){
+      Rect r = Rect.fromLTWH(pos.dx-25,pos.dy,50,50);
+      canvas.drawOval(r, p);
+    }
+  }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
-
 }
-
