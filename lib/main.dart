@@ -39,7 +39,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class MyHomePageState extends State<MyHomePage> {
-  List<Offset> _points = [];
+  double _value = 0;
+  double _opaq = 0;
 
   @override
   void initState() {
@@ -53,35 +54,57 @@ class MyHomePageState extends State<MyHomePage> {
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         title: const Text('event app ', style: TextStyle(fontSize: 23.0)),
       ),
-      body: Center(
-        child: Listener(
-          onPointerDown: _addPoint,
-          child: CustomPaint(painter: MyPainter(_points), child: Center()),
-        ),
+      body: Column(
+        children: [
+          Padding(padding: EdgeInsets.all(10)),
+          Container(
+            width: 300,
+            height: 300,
+            child: CustomPaint(
+              painter: MyPainter(_value, _opaq.toInt()),
+              child: Center(),
+            ),
+          ),
+          Slider(min: 0.0, max: 300.0, value: _value, onChanged: _changeVal),
+          Slider(min: 0.0, max: 255.0, value: _opaq, onChanged: _changeOpaq),
+        ],
       ),
     );
   }
 
-  void _addPoint(PointerDownEvent event) {
+  void _changeVal(double value) {
     setState(() {
-      _points.add(event.localPosition);
+      _value = value;
+    });
+  }
+
+  void _changeOpaq(double opaq) {
+    setState(() {
+      _opaq = opaq;
     });
   }
 }
 
 class MyPainter extends CustomPainter {
-  final List<Offset> _points;
-  MyPainter(this._points);
+  double _value = 0;
+  int _opaq = 0;
+
+  MyPainter(this._value, this._opaq);
 
   @override
   void paint(Canvas canvas, Size size) {
     Paint p = Paint();
     p.style = PaintingStyle.fill;
-    p.color = const Color.fromARGB(100, 0, 200, 100);
-    for(var pos in _points){
-      Rect r = Rect.fromLTWH(pos.dx-25,pos.dy,50,50);
-      canvas.drawOval(r, p);
-    }
+    p.color = Color.fromARGB(_opaq, 0, 200, 100);
+
+    Rect r = Rect.fromLTWH(
+        (size.width - _value) / 2, (size.height - _value) / 2, _value, _value);
+    canvas.drawOval(r, p);
+    r = Rect.fromLTWH(0,0,size.width,size.height);
+    p.style = PaintingStyle.stroke;
+    p.color = const Color.fromARGB(255, 100, 100, 100);
+    canvas.drawOval(r, p);
+
   }
 
   @override
