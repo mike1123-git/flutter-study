@@ -38,26 +38,15 @@ class MyHomePage extends StatefulWidget {
   MyHomePageState createState() => MyHomePageState();
 }
 
-class MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
-
-  late Animation<double> animation;
-  late AnimationController animationController;
+class MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
+  // late Animation<double> animation;
+  // late AnimationController animationController;
+  bool flg = false;
 
   @override
   void initState() {
     super.initState();
-    animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 5)
-    );
-    animation =Tween<double>(begin: 0,end:pi*2)
-    .animate(animationController)
-    ..addListener(() {
-      setState(() {
-
-      });
-    });
-    animationController.repeat(reverse: false);
   }
 
   @override
@@ -67,20 +56,26 @@ class MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMi
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         title: const Text('event app ', style: TextStyle(fontSize: 23.0)),
       ),
-      body: Center(
-          child: Column(
+      body: Column(
         children: [
-          Padding(padding: EdgeInsets.all(10)),
-          Container(
-            width: 300,
-            height: 300,
-            child: CustomPaint(
-              painter: MyPainter(animation.value),
-              child: Center(),
+          AnimatedAlign(
+            alignment: flg ? Alignment.topLeft : Alignment.topRight,
+            duration: const Duration(seconds: 1),
+            curve: Curves.linear,
+            child: Container(
+              color: Colors.red,
+              width: 100,
+              height: 100,
             ),
           ),
         ],
-      )),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => setState(() {
+          flg = !flg;
+        }),
+        child: const Icon(Icons.star),
+      ),
     );
   }
 }
@@ -98,7 +93,7 @@ class MyPainter extends CustomPainter {
     p.style = PaintingStyle.fill;
     p.color = const Color.fromARGB(100, 255, 0, 255);
 
-    Rect r = Rect.fromLTWH(0,0, 250, 250);
+    Rect r = Rect.fromLTWH(0, 0, 250, 250);
     canvas.translate(150, 250);
     canvas.rotate(value);
     canvas.translate(-125, -125);
