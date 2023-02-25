@@ -38,12 +38,26 @@ class MyHomePage extends StatefulWidget {
   MyHomePageState createState() => MyHomePageState();
 }
 
-class MyHomePageState extends State<MyHomePage> {
-  ValueNotifier<int> _value = ValueNotifier<int>(0);
+class MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
+
+  late Animation<double> animation;
+  late AnimationController animationController;
 
   @override
   void initState() {
     super.initState();
+    animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5)
+    );
+    animation =Tween<double>(begin: 0,end:pi*2)
+    .animate(animationController)
+    ..addListener(() {
+      setState(() {
+
+      });
+    });
+    animationController.repeat(reverse: false);
   }
 
   @override
@@ -61,17 +75,10 @@ class MyHomePageState extends State<MyHomePage> {
             width: 300,
             height: 300,
             child: CustomPaint(
-              painter: MyPainter(_value),
+              painter: MyPainter(animation.value),
               child: Center(),
             ),
           ),
-          Padding(padding: EdgeInsets.all(5)),
-          ElevatedButton(
-              onPressed: () => _value.value++,
-              child: const Text(
-                'click',
-                style: TextStyle(fontSize: 32),
-              ))
         ],
       )),
     );
@@ -79,26 +86,35 @@ class MyHomePageState extends State<MyHomePage> {
 }
 
 class MyPainter extends CustomPainter {
-  ValueNotifier<int> _value;
+  double value;
 
-  MyPainter(this._value);
+  MyPainter(this.value);
 
   @override
   void paint(Canvas canvas, Size size) {
     Paint p = Paint();
-    p.style = PaintingStyle.fill;
-    p.color = const Color.fromARGB(50, 0, 200, 100);
+    canvas.save();
 
-    Rect r;
-    for(var i = 0;i < _value.value;i++){
-      r = Rect.fromLTWH(10+i*20,10+i*20 , 100, 100);
-      canvas.drawRect(r, p);
-    }
-    r = Rect.fromLTWH(0, 0, size.width, size.height);
-    p.style = PaintingStyle.stroke;
-    p.color = const Color.fromARGB(255, 100, 100, 100);
+    p.style = PaintingStyle.fill;
+    p.color = const Color.fromARGB(100, 255, 0, 255);
+
+    Rect r = Rect.fromLTWH(0,0, 250, 250);
+    canvas.translate(150, 250);
+    canvas.rotate(value);
+    canvas.translate(-125, -125);
     canvas.drawRect(r, p);
-    if(_value.value > 10) _value.value =0;
+
+    canvas.restore();
+
+    p.style = PaintingStyle.stroke;
+    p.strokeWidth = 25;
+    p.color = const Color.fromARGB(100, 255, 0, 255);
+    p.color = const Color.fromARGB(100, 0, 255, 255);
+
+    r = Rect.fromLTWH(0, 0, 250, 250);
+    canvas.rotate(value);
+    canvas.translate(-125, -125);
+    canvas.drawRect(r, p);
   }
 
   @override
