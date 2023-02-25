@@ -60,17 +60,11 @@ class MyHomePageState extends State<MyHomePage>
         padding: EdgeInsets.all(20.0),
         child: Column(
           children: [
-            AnimatedCrossFade(
-                firstChild: const FlutterLogo(
-                  style: FlutterLogoStyle.horizontal,
-                  size: 300,
-                ),
-                secondChild: const FlutterLogo(
-                  style: FlutterLogoStyle.stacked,
-                  size: 300,
-                ),
-                crossFadeState: flg ? CrossFadeState.showFirst:CrossFadeState.showSecond,
-                duration: const Duration(seconds: 3))
+            AnimatedContainer(duration: Duration(seconds: 3),
+            color: flg? Colors.red:Colors.blue,
+              width: flg? 100:300,
+              height: flg? 300:100,
+            )
           ],
         ),
       ),
