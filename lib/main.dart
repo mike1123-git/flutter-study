@@ -56,18 +56,22 @@ class MyHomePageState extends State<MyHomePage>
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         title: const Text('event app ', style: TextStyle(fontSize: 23.0)),
       ),
-      body: Column(
-        children: [
-          AnimatedDefaultTextStyle(
-              style: TextStyle(
-                fontSize: flg? 24.0:48.0,
-                fontWeight: FontWeight.bold,
-                color: flg ? Colors.red : Colors.blue,
-
-              ),
-              duration: const Duration(seconds: 3),
-              child: const Text('hello flutter'))
-        ],
+      body:
+      Padding(
+        padding: EdgeInsets.all(20.0),
+        child: Stack(
+          children: [
+            AnimatedPositioned(
+                child: Container(
+                  color: Colors.red,
+                  width: 100,
+                  height: 100,
+                ),
+                top: flg ? 300:0,
+                left: flg ? 0:300,
+                duration: const Duration(seconds: 3))
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => setState(() {
