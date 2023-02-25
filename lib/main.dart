@@ -58,16 +58,15 @@ class MyHomePageState extends State<MyHomePage>
       ),
       body: Column(
         children: [
-          AnimatedAlign(
-            alignment: flg ? Alignment.topLeft : Alignment.topRight,
-            duration: const Duration(seconds: 1),
-            curve: Curves.linear,
-            child: Container(
-              color: Colors.red,
-              width: 100,
-              height: 100,
-            ),
-          ),
+          AnimatedDefaultTextStyle(
+              style: TextStyle(
+                fontSize: flg? 24.0:48.0,
+                fontWeight: FontWeight.bold,
+                color: flg ? Colors.red : Colors.blue,
+
+              ),
+              duration: const Duration(seconds: 3),
+              child: const Text('hello flutter'))
         ],
       ),
       floatingActionButton: FloatingActionButton(
