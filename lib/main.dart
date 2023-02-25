@@ -56,19 +56,20 @@ class MyHomePageState extends State<MyHomePage>
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         title: const Text('event app ', style: TextStyle(fontSize: 23.0)),
       ),
-      body:
-      Padding(
+      body: Padding(
         padding: EdgeInsets.all(20.0),
-        child: Stack(
+        child: Column(
           children: [
-            AnimatedPositioned(
-                child: Container(
-                  color: Colors.red,
-                  width: 100,
-                  height: 100,
+            AnimatedCrossFade(
+                firstChild: const FlutterLogo(
+                  style: FlutterLogoStyle.horizontal,
+                  size: 300,
                 ),
-                top: flg ? 300:0,
-                left: flg ? 0:300,
+                secondChild: const FlutterLogo(
+                  style: FlutterLogoStyle.stacked,
+                  size: 300,
+                ),
+                crossFadeState: flg ? CrossFadeState.showFirst:CrossFadeState.showSecond,
                 duration: const Duration(seconds: 3))
           ],
         ),
