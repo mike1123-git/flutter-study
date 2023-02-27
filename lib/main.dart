@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -38,16 +40,9 @@ class MyHomePage extends StatefulWidget {
   MyHomePageState createState() => MyHomePageState();
 }
 
-class MyHomePageState extends State<MyHomePage>
-    with SingleTickerProviderStateMixin {
-  // late Animation<double> animation;
-  // late AnimationController animationController;
-  bool flg = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
+class MyHomePageState extends State<MyHomePage> {
+  final _controller = TextEditingController();
+  final _fname = 'flutter_sampledata.txt';
 
   @override
   Widget build(BuildContext context) {
@@ -59,57 +54,82 @@ class MyHomePageState extends State<MyHomePage>
       body: Padding(
         padding: EdgeInsets.all(20.0),
         child: Column(
-          children: [
-            AnimatedContainer(duration: Duration(seconds: 3),
-            color: flg? Colors.red:Colors.blue,
-              width: flg? 100:300,
-              height: flg? 300:100,
+          children: <Widget>[
+            const Text('File Access',
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.w500)),
+            Padding(padding: EdgeInsets.all(10.0)),
+            TextField(
+              controller: _controller,
+              style: TextStyle(fontSize: 24),
+              minLines: 1,
+              maxLines: 5
             )
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => setState(() {
-          flg = !flg;
-        }),
-        child: const Icon(Icons.star),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.blue,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white,
+        currentIndex: 0,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.save,color: Colors.white,size: 32),
+          label: 'Save'
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.open_in_new,color: Colors.white,size:32),
+            label: 'Load'
+          )
+        ],
+        onTap: (int value) async{
+          switch(value){
+            case 0:
+              saveIt(_controller.text);
+              // setState(() {
+              //   _controller.text='';
+              // });
+              showDialog(context: context,
+                  builder:(BuildContext context) => const AlertDialog(
+                    title: Text('Saved'),
+                    content: Text('save message to file'),
+                  )
+              );
+              break;
+            case 1:
+              String value = await loadIt();
+              setState(() {
+                _controller.text=value;
+              });
+              showDialog(context: context,
+                  builder:(BuildContext context) =>  AlertDialog(
+                    title: Text('Loaded'),
+                    content: Text('load message to file'),
+                  )
+              );
+              break;
+            default:print('no default');
+          }
+        },
       ),
     );
   }
-}
 
-class MyPainter extends CustomPainter {
-  double value;
-
-  MyPainter(this.value);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint p = Paint();
-    canvas.save();
-
-    p.style = PaintingStyle.fill;
-    p.color = const Color.fromARGB(100, 255, 0, 255);
-
-    Rect r = Rect.fromLTWH(0, 0, 250, 250);
-    canvas.translate(150, 250);
-    canvas.rotate(value);
-    canvas.translate(-125, -125);
-    canvas.drawRect(r, p);
-
-    canvas.restore();
-
-    p.style = PaintingStyle.stroke;
-    p.strokeWidth = 25;
-    p.color = const Color.fromARGB(100, 255, 0, 255);
-    p.color = const Color.fromARGB(100, 0, 255, 255);
-
-    r = Rect.fromLTWH(0, 0, 250, 250);
-    canvas.rotate(value);
-    canvas.translate(-125, -125);
-    canvas.drawRect(r, p);
+  Future<File> getDataFile(String fileName) async{
+    var directory = await getApplicationDocumentsDirectory();
+    return File('${directory.path}/$fileName');
   }
 
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  void saveIt(String value) async {
+    var file = await getDataFile(_fname);
+    file.writeAsString(value);
+  }
+  Future<String> loadIt() async{
+    try{
+      var file = await getDataFile(_fname);
+      return file.readAsString();
+    }catch(e){
+      return 'no data';
+    }
+  }
 }
