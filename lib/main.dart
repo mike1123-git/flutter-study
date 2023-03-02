@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:ui' as ui;
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -42,7 +43,7 @@ class MyHomePage extends StatefulWidget {
 
 class MyHomePageState extends State<MyHomePage> {
   final _controller = TextEditingController();
-  final _fname = 'flutter_sampledata.txt';
+  final _fname = 'assets/documents/data.txt';
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +56,7 @@ class MyHomePageState extends State<MyHomePage> {
         padding: EdgeInsets.all(20.0),
         child: Column(
           children: <Widget>[
-            const Text('File Access',
+            const Text('Resource Access',
                 style: TextStyle(fontSize: 32, fontWeight: FontWeight.w500)),
             Padding(padding: EdgeInsets.all(10.0)),
             TextField(
@@ -67,49 +68,20 @@ class MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.blue,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white,
-        currentIndex: 0,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.save,color: Colors.white,size: 32),
-          label: 'Save'
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.open_in_new,color: Colors.white,size:32),
-            label: 'Load'
-          )
-        ],
-        onTap: (int value) async{
-          switch(value){
-            case 0:
-              saveIt(_controller.text);
-              // setState(() {
-              //   _controller.text='';
-              // });
-              showDialog(context: context,
-                  builder:(BuildContext context) => const AlertDialog(
-                    title: Text('Saved'),
-                    content: Text('save message to file'),
-                  )
-              );
-              break;
-            case 1:
-              String value = await loadIt();
-              setState(() {
-                _controller.text=value;
-              });
-              showDialog(context: context,
-                  builder:(BuildContext context) =>  AlertDialog(
-                    title: Text('Loaded'),
-                    content: Text('load message to file'),
-                  )
-              );
-              break;
-            default:print('no default');
-          }
+      floatingActionButton: FloatingActionButton(
+
+        child: Icon(Icons.open_in_new),
+        onPressed: () async{
+          var value = await loadIt();
+          setState(() {
+            _controller.text = value;
+          });
+          showDialog(context: context, builder: (BuildContext buildContext)=>
+              const AlertDialog(
+                title: Text("load suceeced!"),
+                content: Text("load message from asset"),
+              )
+          );
         },
       ),
     );
@@ -120,15 +92,20 @@ class MyHomePageState extends State<MyHomePage> {
     return File('${directory.path}/$fileName');
   }
 
+  Future<String> getDataAsset(String path) async{
+    return await rootBundle.loadString(path);
+  }
   void saveIt(String value) async {
     var file = await getDataFile(_fname);
     file.writeAsString(value);
   }
   Future<String> loadIt() async{
     try{
-      var file = await getDataFile(_fname);
-      return file.readAsString();
+       var res =await getDataAsset(_fname);
+       debugPrint("data is $res");
+       return res;
     }catch(e){
+      print(e.toString());
       return 'no data';
     }
   }
