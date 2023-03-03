@@ -1,10 +1,9 @@
 import 'dart:math';
-
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 import 'dart:ui' as ui;
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
+import 'dart:convert';
+import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyApp());
@@ -43,7 +42,8 @@ class MyHomePage extends StatefulWidget {
 
 class MyHomePageState extends State<MyHomePage> {
   final _controller = TextEditingController();
-  final _fname = 'assets/documents/data.txt';
+  static const host = 'baconipsum.com';
+  static const path = '/api/?type=meat-and-filler&paras=1&format=text';
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,7 @@ class MyHomePageState extends State<MyHomePage> {
         padding: EdgeInsets.all(20.0),
         child: Column(
           children: <Widget>[
-            const Text('Resource Access',
+            const Text('Internet Access',
                 style: TextStyle(fontSize: 32, fontWeight: FontWeight.w500)),
             Padding(padding: EdgeInsets.all(10.0)),
             TextField(
@@ -64,7 +64,7 @@ class MyHomePageState extends State<MyHomePage> {
               style: TextStyle(fontSize: 24),
               minLines: 1,
               maxLines: 5
-            )
+            ),
           ],
         ),
       ),
@@ -72,14 +72,11 @@ class MyHomePageState extends State<MyHomePage> {
 
         child: Icon(Icons.open_in_new),
         onPressed: () async{
-          var value = await loadIt();
-          setState(() {
-            _controller.text = value;
-          });
+          getData();
           showDialog(context: context, builder: (BuildContext buildContext)=>
               const AlertDialog(
-                title: Text("load suceeced!"),
-                content: Text("load message from asset"),
+                title: Text("loaded"),
+                content: Text("get content from URI."),
               )
           );
         },
@@ -87,26 +84,13 @@ class MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Future<File> getDataFile(String fileName) async{
-    var directory = await getApplicationDocumentsDirectory();
-    return File('${directory.path}/$fileName');
+  void getData() async {
+    var http = await HttpClient();
+    HttpClientRequest request = await http.get(host, 80, path);
+    HttpClientResponse response = await request.close();
+    var value = await response.transform(utf8.decoder).join();
+    _controller.text =value;
   }
 
-  Future<String> getDataAsset(String path) async{
-    return await rootBundle.loadString(path);
-  }
-  void saveIt(String value) async {
-    var file = await getDataFile(_fname);
-    file.writeAsString(value);
-  }
-  Future<String> loadIt() async{
-    try{
-       var res =await getDataAsset(_fname);
-       debugPrint("data is $res");
-       return res;
-    }catch(e){
-      print(e.toString());
-      return 'no data';
-    }
-  }
+
 }
